@@ -2,15 +2,9 @@ import speech_recognition as sr
 import audioop
 import pyaudio as pa
 import pyttsx3
-import requests
-from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
+
 import webbrowser
 
-import time
-import pandas as pd
-import os
 
 # Self defined modules
 from modules import speechToText
