@@ -14,6 +14,7 @@ import re
 
 # Self defined modules
 from modules1 import speechToText
+from foodnamerecognizer import sent_parse
 
 engine = pyttsx3.init()
 
@@ -25,14 +26,23 @@ engine.setProperty('voice', voice_id)
 engine.say("Please speak out the food item") 
 engine.runAndWait()
 
+
 r = sr.Recognizer()
 with sr.Microphone() as source2:
     userVoiceInText = speechToText(r, source2)
     print("Voice to Text test:",userVoiceInText)    
     
-#string = "I cheese"
+#userVoiceInText = "I had peanut butter and jelly sandwich and a cup of coffee for breakfast"
 userVoiceInText = userVoiceInText.upper()
 words = userVoiceInText.split()
+
+""" 
+    #Note: Tried the code from stackoverflow. Output is not as expected yet. Need to dig out more
+
+words = sent_parse(userVoiceInText)
+print(words)
+"""
+
 
 # Get the food CSV using absolute path 
 cwd = os.getcwd() # gets the current working directory
