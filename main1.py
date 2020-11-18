@@ -43,16 +43,22 @@ cwd = os.getcwd() # gets the current working directory
 foodData = os.path.realpath(r"food.csv") # gives absolute path regardless the OS
 
 
-df = pd.read_csv(data)
-df = df.drop_duplicates(subset = ["description"])
+df = pd.read_csv(foodData)
+df = df.drop_duplicates(subset = ["description"])  # Drop any description duplicates
 df["description"] = df["description"].str.upper()
 df["description"] = df["description"].str.split(", | | -")
 #print(df["description"])
+
+""" 
+ TODO: Revisit this section for future optimization
+"""
 df1 = pd.DataFrame(columns = ['fdc_id', 'description']) 
+# For each word got over the voice, go over the Food-data and get FDC-ID
 for word in words:
     df['flag'] = df.apply(lambda x: int(word in x['description']), axis=1)
     df1 = df1.append(df[df['flag'] == 1].iloc[1:2,[0, 2]])
 
+# Call on webbrowser and reachout FDC website with the filtered out fdc-id
 for ids in df1["fdc_id"]:
     ids = str(ids)
     url = 'https://fdc.nal.usda.gov/fdc-app.html#/food-details/' + ids + '/nutrients'
