@@ -34,10 +34,6 @@ with sr.Microphone() as source2:
 userVoiceInText = userVoiceInText.upper()
 words = userVoiceInText.split()
 
-#path = r"C:\Users\dfsdfsdsdf\Desktop\NLP\nutrition-assistant"
-#path1 = r"data\FoodData_Central_foundation_food_csv_2020-04-29"
-#data = os.path.join(path, path1, "food.csv")
-
 # Get the food CSV using absolute path 
 cwd = os.getcwd() # gets the current working directory
 foodData = os.path.realpath(r"food.csv") # gives absolute path regardless the OS
