@@ -86,15 +86,16 @@ if __name__ == '__main__':
     
     r = sr.Recognizer() # Function to be sent as an argument for the speech into text function
     with sr.Microphone() as source2:
-        string = speechToText(r, source2)
+        string = speechToText(r, source2) # Temporary commenting needed for work
+        #string = "I want chicken burger"
         print(string)
 
-        # Defining the absolute path of the food data in PC
+        # Defining the relative path of the food data in PC
         ##################################################################
-        #string = 'I would like to get information about bacon or cheese'
-        path = r"C:\Users\dfsdfsdsdf\Desktop\NLP\nutrition-assistant"
-        path1 = r"data\FoodData_Central_foundation_food_csv_2020-04-29"
-        data = os.path.join(path, path1, "food.csv")
+        
+        cwd = os.getcwd() # gets the current working directory
+        data = os.path.realpath(r"food.csv") # gives absolute path regardless the OS
+        
         ##################################################################
         
         df = pd.read_csv(data) # Read the data file as a data frame
