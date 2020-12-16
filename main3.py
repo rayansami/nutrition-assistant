@@ -77,7 +77,7 @@ def speechToText(r, source2):
 def userCommand():
     r = sr.Recognizer() # Creating a recognizer instance
     # print(sr.Microphone.list_microphone_names())
-    mic = sr.Microphone(device_index=0) # index = 0 is Built-in Microphone 
+    mic = sr.Microphone(device_index=0) # index = 0 is for Built-in Microphone 
     
     result = ''
     with mic as source:
@@ -99,16 +99,10 @@ if __name__ == '__main__':
     engine.setProperty('voice', voice_id) 
     engine.say("Please speak out the food item") 
     engine.runAndWait()
-    ########################################################
+    ########################################################    
     
-    #r = sr.Recognizer() # Function to be sent as an argument for the speech into text function
-    #with sr.Microphone() as source2:
-    #    string = speechToText(r, source2) # Temporary commenting needed for work
-    
-    string = userCommand()
-    
-    #print(string)
-    #string = "I ate an Apple" # Test String: 1
+    #string = userCommand()    
+    string = "I ate an Apple" # Test String: 1
     #string = "I had orange banana" # Test String: 2
     print(string)
 
@@ -130,7 +124,7 @@ if __name__ == '__main__':
     #df["description"] = df["description"].str.upper() # Convert all the contents of the data frame with "description" into upper case
     #temp = vectorizer.fit_transform(df["description"])
     for word in sent_parse(string):
-        foodItemDetails = api_calls.getFoodItems(word)
+        foodItemDetails = api_calls.getFoodItems(word) # Sending the food name with upper case 
         
         newInputFromUser = ''
         if foodItemDetails is None:         
