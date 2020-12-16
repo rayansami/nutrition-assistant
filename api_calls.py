@@ -12,6 +12,9 @@ api_key = "Za6qWk9XQkvBWOL5m0mqwf04W9tk6eoUfZt5HpZV"
 url = 'https://api.nal.usda.gov/fdc/v1/foods/search'
 
 def checkForMaxCosineSimilarItems(fooditem,jsonData):
+    print('Checking item:',fooditem)
+    print('Checking json:',jsonData['foods'][0]['description'])
+    
     listi = []        
     for index in range(0,len(jsonData['foods'])): # Starting from 0 index of the foods array
         descriptionOnList = jsonData['foods'][index]['description']
@@ -44,6 +47,7 @@ def topTenHasSameCosine(listWithFdcidAndCosine):
 def getFoodItems(fooditem):
     print('hit on getFooditems')
     foodNutrient = None
+    isHitOnCase1 = False
     
     """
         Get the food data using RESTful API from FDC database
@@ -66,6 +70,7 @@ def getFoodItems(fooditem):
             Case 1 [Revisit&Research]: More then 10 items with 100% cosine similarity
             There can be a case where there are many items with 100% cosine similarity (e.g. Soup). In these cases we'll ask the user again                    
         """
+        isHitOnCase1 = True
         return foodNutrient
 
     elif jsonData['foods'][0]['description'] == fooditem.upper(): 
@@ -81,6 +86,10 @@ def getFoodItems(fooditem):
             Case 3: Max similar item with more then 80% cosine similarity 
             If the first item doesn't match exactly, check cosine similarity in the list and Take the highest one (with over 80%)        
                 
+            This can get hit in 2 scenerios:
+                1. Case 1 & 2 are False. And Case 3 got hit for the first time
+                2. Case 1 was true first time. As the user input was vague. Then system asked for more specific details
+                   and user gave specific name. Then Case 3 got hit
         """
         
         # TODO: fix naming - listi to listWithFdcidAndCosine
@@ -91,7 +100,8 @@ def getFoodItems(fooditem):
         if(listi[-1]['cosineValue'] >= 0.8):
             for index in range(0,len(jsonData['foods'])):
                 if jsonData['foods'][index]['fdcId'] == listi[-1]['fdcId']:
-                    foodNutrient =  jsonData['foods'][index]['description']
+                    print('Got match')
+                    foodNutrient =  jsonData['foods'][index]['foodNutrients']
                     break
             
         return foodNutrient

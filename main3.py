@@ -102,7 +102,7 @@ if __name__ == '__main__':
     ########################################################    
     
     #string = userCommand()    
-    string = "I ate an Apple" # Test String: 1
+    string = "I ate Soup" # Test String: 1
     #string = "I had orange banana" # Test String: 2
     print(string)
 
@@ -128,11 +128,11 @@ if __name__ == '__main__':
         
         newInputFromUser = ''
         if foodItemDetails is None:         
-            engine.say("Please be more specific about your food item") 
-            engine.runAndWait()
+            engine.say("Please be more specific about your food item that is") 
+            #engine.runAndWait()
             engine.say(word) 
             engine.runAndWait()
-            newInputFromUser = userCommand()
+            newInputFromUser = "Spinach soup" #userCommand() # JUST TAKING FOOD NAME - NO CASUAL TALK
         
         # After getting new voice command, we need to update foodItemDetails with new one
         if newInputFromUser != '':
