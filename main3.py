@@ -88,7 +88,8 @@ if __name__ == '__main__':
     r = sr.Recognizer() # Function to be sent as an argument for the speech into text function
     with sr.Microphone() as source2:
         string = speechToText(r, source2) # Temporary commenting needed for work
-        string = "I ate an Apple" # Test String: 1
+        #string = "I ate an Apple" # Test String: 1
+        string = "I had orange banana" # Test String: 2
         print(string)
 
         # Defining the relative path of the food data in PC
