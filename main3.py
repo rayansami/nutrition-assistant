@@ -74,6 +74,22 @@ def speechToText(r, source2):
         print("Unknown error occured")
 ##############################################################################        
 
+def userCommand():
+    r = sr.Recognizer() # Creating a recognizer instance
+    # print(sr.Microphone.list_microphone_names())
+    mic = sr.Microphone(device_index=0) # index = 0 is Built-in Microphone 
+    
+    result = ''
+    with mic as source:
+        audio = r.listen(source)
+        
+        """
+            recognize_google is speech recognition model created by Google
+        """
+        result = r.recognize_google(audio)
+        
+    #print(result)
+    return result
 
 if __name__ == '__main__':
     # Setting up computer in-built audio voice for the prompt
@@ -85,99 +101,119 @@ if __name__ == '__main__':
     engine.runAndWait()
     ########################################################
     
-    r = sr.Recognizer() # Function to be sent as an argument for the speech into text function
-    with sr.Microphone() as source2:
-        string = speechToText(r, source2) # Temporary commenting needed for work
-        #string = "I ate an Apple" # Test String: 1
-        string = "I had orange banana" # Test String: 2
-        print(string)
+    #r = sr.Recognizer() # Function to be sent as an argument for the speech into text function
+    #with sr.Microphone() as source2:
+    #    string = speechToText(r, source2) # Temporary commenting needed for work
+    
+    string = userCommand()
+    
+    #print(string)
+    #string = "I ate an Apple" # Test String: 1
+    #string = "I had orange banana" # Test String: 2
+    print(string)
 
-        # Defining the relative path of the food data in PC
-        ##################################################################
-        
-        cwd = os.getcwd() # gets the current working directory
-        data = os.path.realpath(r"food.csv") # gives absolute path regardless the OS
-        
-        ##################################################################
-        
-        df = pd.read_csv(data) # Read the data file as a data frame
-        #df = df.drop_duplicates(subset = ["description"])
-        print(sent_parse(string)) # pass the converted string text of the user voice to the regex parser. It will extract food items from the string text
+    # Defining the relative path of the food data in PC
+    ##################################################################
+    
+    #cwd = os.getcwd() # gets the current working directory
+    #data = os.path.realpath(r"food.csv") # gives absolute path regardless the OS
+    
+    ##################################################################
+    
+    #df = pd.read_csv(data) # Read the data file as a data frame
+    #df = df.drop_duplicates(subset = ["description"])
+    print(sent_parse(string)) # pass the converted string text of the user voice to the regex parser. It will extract food items from the string text
 
-        # Computing the cosine similarity for the list of user defined food items
-        ##########################################################################
-        #vectorizer = TfidfVectorizer()
-        #df["description"] = df["description"].str.upper() # Convert all the contents of the data frame with "description" into upper case
-        #temp = vectorizer.fit_transform(df["description"])
-        for word in sent_parse(string):
-            api_calls.getFoodItems(word)
-            """
-            query_tfidf = vectorizer.transform([word])
-            cosineSimilarities = cosine_similarity(query_tfidf, 
-                                                   temp).flatten()
-            df["cosineSimilarities"] = cosineSimilarities # adding a new column for the data frame
-            if df["cosineSimilarities"][df["cosineSimilarities"].values.argmax()] <= 0.7: # if the maximum cosine similarity between the food item of the user and the food item in the data base is less than 70%
-                engine.say("The food item") 
-                engine.runAndWait()
-                engine.say(word) 
-                engine.runAndWait()
-                engine.say("is not present in the database") 
-                engine.runAndWait()
-                engine.say("Do you mean") 
-                engine.runAndWait()
-                engine.say(df["description"][df["cosineSimilarities"].values.argmax()]) 
-                engine.runAndWait()
-                engine.say("say yes or no") 
-                engine.runAndWait()
+    # Computing the cosine similarity for the list of user defined food items
+    ##########################################################################
+    #vectorizer = TfidfVectorizer()
+    #df["description"] = df["description"].str.upper() # Convert all the contents of the data frame with "description" into upper case
+    #temp = vectorizer.fit_transform(df["description"])
+    for word in sent_parse(string):
+        foodItemDetails = api_calls.getFoodItems(word)
+        
+        newInputFromUser = ''
+        if foodItemDetails is None:         
+            engine.say("Please be more specific about your food item") 
+            engine.runAndWait()
+            engine.say(word) 
+            engine.runAndWait()
+            newInputFromUser = userCommand()
+        
+        # After getting new voice command, we need to update foodItemDetails with new one
+        if newInputFromUser != '':
+            foodItemDetails = api_calls.getFoodItems(newInputFromUser)
+        
+        print(foodItemDetails)
+        
+        
+        """
+        query_tfidf = vectorizer.transform([word])
+        cosineSimilarities = cosine_similarity(query_tfidf, 
+                                               temp).flatten()
+        df["cosineSimilarities"] = cosineSimilarities # adding a new column for the data frame
+        if df["cosineSimilarities"][df["cosineSimilarities"].values.argmax()] <= 0.7: # if the maximum cosine similarity between the food item of the user and the food item in the data base is less than 70%
+            engine.say("The food item") 
+            engine.runAndWait()
+            engine.say(word) 
+            engine.runAndWait()
+            engine.say("is not present in the database") 
+            engine.runAndWait()
+            engine.say("Do you mean") 
+            engine.runAndWait()
+            engine.say(df["description"][df["cosineSimilarities"].values.argmax()]) 
+            engine.runAndWait()
+            engine.say("say yes or no") 
+            engine.runAndWait()
 
-                # Program will wait until user says yes or no
-                ################################################################################
-                format1 = pa.paInt16
-                rate = 16000
-                channel = 1
-                chunk = 1024
-                threshold = 600
-            
-                # intialise microphone stream
-                audio = pa.PyAudio()
-            
-                stream = audio.open(format=format1, 
-                                    channels=channel,
-                                    rate=rate,
-                                    input=True,
-                                    frames_per_buffer=chunk)
-            
-            
-                while True:
-                    data = stream.read(chunk)
-                    rms = audioop.rms(data,2) #get input volume
-                    if rms > threshold: #if input volume greater than threshold
-                        audio2 = r.listen(source2, timeout=1,phrase_time_limit=10)
-                        string = r.recognize_google(audio2)
-                        string = string.lower()
-                        #print(rms, threshold, " Detected")
-                        break
-                #################################################################################
-                    
-                string = speechToText(r, source2)
-                if string == "yes": # if yes then display nutritions of that food item
-                    ids = str(df["fdc_id"][df["cosineSimilarities"].values.argmax()])
-                    #ids = str(df["fdc_id"][temp])
-                    url = 'https://fdc.nal.usda.gov/fdc-app.html#/food-details/' + ids + '/nutrients'
-                    webbrowser.open(url)
-                elif string == "no": # if no then switch to the next food item in the list
-                    continue
+            # Program will wait until user says yes or no
+            ################################################################################
+            format1 = pa.paInt16
+            rate = 16000
+            channel = 1
+            chunk = 1024
+            threshold = 600
+        
+            # intialise microphone stream
+            audio = pa.PyAudio()
+        
+            stream = audio.open(format=format1, 
+                                channels=channel,
+                                rate=rate,
+                                input=True,
+                                frames_per_buffer=chunk)
+        
+        
+            while True:
+                data = stream.read(chunk)
+                rms = audioop.rms(data,2) #get input volume
+                if rms > threshold: #if input volume greater than threshold
+                    audio2 = r.listen(source2, timeout=1,phrase_time_limit=10)
+                    string = r.recognize_google(audio2)
+                    string = string.lower()
+                    #print(rms, threshold, " Detected")
+                    break
+            #################################################################################
                 
-            else:
-                #print(df.sort_values('cosineSimilarities', ascending = False))
+            string = speechToText(r, source2)
+            if string == "yes": # if yes then display nutritions of that food item
                 ids = str(df["fdc_id"][df["cosineSimilarities"].values.argmax()])
                 #ids = str(df["fdc_id"][temp])
                 url = 'https://fdc.nal.usda.gov/fdc-app.html#/food-details/' + ids + '/nutrients'
                 webbrowser.open(url)
-                print(df["cosineSimilarities"][df["cosineSimilarities"].values.argmax()])
-            #print(df["cosineSimilarities"][df["cosineSimilarities"].values.argmax()])
-            """
-    
+            elif string == "no": # if no then switch to the next food item in the list
+                continue
+            
+        else:
+            #print(df.sort_values('cosineSimilarities', ascending = False))
+            ids = str(df["fdc_id"][df["cosineSimilarities"].values.argmax()])
+            #ids = str(df["fdc_id"][temp])
+            url = 'https://fdc.nal.usda.gov/fdc-app.html#/food-details/' + ids + '/nutrients'
+            webbrowser.open(url)
+            print(df["cosineSimilarities"][df["cosineSimilarities"].values.argmax()])
+        #print(df["cosineSimilarities"][df["cosineSimilarities"].values.argmax()])
+        """
+
     
     
     
