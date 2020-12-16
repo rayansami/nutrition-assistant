@@ -18,6 +18,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import pprint
 from nltk import Tree
 import pdb
+import api_calls
 
 # Implementation of regex parser
 #############################################################################
@@ -87,7 +88,7 @@ if __name__ == '__main__':
     r = sr.Recognizer() # Function to be sent as an argument for the speech into text function
     with sr.Microphone() as source2:
         string = speechToText(r, source2) # Temporary commenting needed for work
-        #string = "I want chicken burger"
+        string = "I ate an Apple" # Test String: 1
         print(string)
 
         # Defining the relative path of the food data in PC
@@ -104,10 +105,12 @@ if __name__ == '__main__':
 
         # Computing the cosine similarity for the list of user defined food items
         ##########################################################################
-        vectorizer = TfidfVectorizer()
-        df["description"] = df["description"].str.upper() # Convert all the contents of the data frame with "description" into upper case
-        temp = vectorizer.fit_transform(df["description"])
+        #vectorizer = TfidfVectorizer()
+        #df["description"] = df["description"].str.upper() # Convert all the contents of the data frame with "description" into upper case
+        #temp = vectorizer.fit_transform(df["description"])
         for word in sent_parse(string):
+            api_calls.getFoodItems(word)
+            """
             query_tfidf = vectorizer.transform([word])
             cosineSimilarities = cosine_similarity(query_tfidf, 
                                                    temp).flatten()
@@ -172,7 +175,7 @@ if __name__ == '__main__':
                 webbrowser.open(url)
                 print(df["cosineSimilarities"][df["cosineSimilarities"].values.argmax()])
             #print(df["cosineSimilarities"][df["cosineSimilarities"].values.argmax()])
-
+            """
     
     
     
