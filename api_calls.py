@@ -47,7 +47,6 @@ def topTenHasSameCosine(listWithFdcidAndCosine):
 def getFoodItems(fooditem):
     print('hit on getFooditems')
     foodNutrient = None
-    isHitOnCase1 = False
     
     """
         Get the food data using RESTful API from FDC database
@@ -70,7 +69,6 @@ def getFoodItems(fooditem):
             Case 1 [Revisit&Research]: More then 10 items with 100% cosine similarity
             There can be a case where there are many items with 100% cosine similarity (e.g. Soup). In these cases we'll ask the user again                    
         """
-        isHitOnCase1 = True
         return foodNutrient
 
     elif jsonData['foods'][0]['description'] == fooditem.upper(): 
