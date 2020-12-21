@@ -21,8 +21,7 @@ establish the connection between them. Here, the system
 finds ”a cup” is related to the ”coffee”.
 4) Analyze the candidates and decide whether the instructions
 are clear or more information is needed.
-5
- If instructions are not clear narrate to the user to be
+    - If instructions are not clear narrate to the user to be
 more specific about the choices
 5) Extracted candidates are processed against a dataset
 containing food names.
