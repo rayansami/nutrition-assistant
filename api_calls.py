@@ -7,8 +7,12 @@ Created on Tue Dec 15 15:33:56 2020
 """
 import requests
 import CosineCalculation
+import utility # Custom module, only returns FDC API key. Not available inside git repo for preventing abuse
 
-api_key = "Za6qWk9XQkvBWOL5m0mqwf04W9tk6eoUfZt5HpZV"
+"""
+    ### If you want to use this program, get FDC API key and change the value below ###
+"""
+api_key = utility.get_api_key()
 url = 'https://api.nal.usda.gov/fdc/v1/foods/search'
 
 def checkForMaxCosineSimilarItems(fooditem,jsonData):
