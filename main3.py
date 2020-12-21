@@ -101,8 +101,8 @@ if __name__ == '__main__':
     engine.runAndWait()
     ########################################################    
     
-    #string = userCommand()    
-    string = "I ate Soup" # Test String: 1
+    string = userCommand()    
+    #string = "I ate Soup" # Test String: 1
     #string = "I had apple" # Test String: 2
     #string = "I ate apple and banana" # Test string 3
     #string = "I ate apple and soup" # Test string 3
@@ -116,7 +116,8 @@ if __name__ == '__main__':
         foodItemDetails = api_calls.getFoodItems(word) # Sending the food name with upper case 
         
         newInputFromUser = ''
-        if foodItemDetails is None:         
+        if foodItemDetails is None:     
+            engine.runAndWait()
             engine.say("Please be more specific about your food item that is") 
             engine.runAndWait()
             engine.say(word) 
